@@ -90,7 +90,7 @@ const VideoCall: React.FunctionComponent = () => {
             </MiddleSpace>
             <RightSpace>
               {localStream && (
-                <Card style={{ margin: 8 }}>
+                <Card style={{ margin: 8 }} variant="outlined">
                   <StreamPlayer stream={localStream} />
                 </Card>
               )}
