@@ -17,6 +17,7 @@ const Container = styled.div`
 const DialogContainer = styled.div`
   width: 100%;
   height: 100%;
+  display: flex;
 `;
 
 const BottomPanel = styled.div`
@@ -26,6 +27,7 @@ const BottomPanel = styled.div`
   min-height: 100px;
   display: flex;
   justify-content: space-between;
+  z-index: 9999;
 `;
 
 const LeftSpace = styled.div`
@@ -43,8 +45,12 @@ const RightSpace = styled.div`
   justify-content: flex-end;
 `;
 
+const StreamPlayerWrapper = styled.div`
+  flex: 1 0 25%;
+`;
+
 const VideoCall: React.FunctionComponent = () => {
-  const { localStream, isJoined, join, leave } = useAgora();
+  const { localStream, remoteStreamList, isJoined, join, leave } = useAgora();
 
   const handleJoinButtonClick = () => {
     join();
@@ -61,6 +67,16 @@ const VideoCall: React.FunctionComponent = () => {
       </Container>
       <Dialog fullScreen open={isJoined}>
         <DialogContainer>
+          {remoteStreamList.map((stream: any) => (
+            <StreamPlayerWrapper>
+              <StreamPlayer
+                key={stream.getId()}
+                stream={stream}
+                fit="cover"
+                style={{ width: "100%", height: "100%" }}
+              />
+            </StreamPlayerWrapper>
+          ))}
           <BottomPanel>
             <LeftSpace></LeftSpace>
             <MiddleSpace>

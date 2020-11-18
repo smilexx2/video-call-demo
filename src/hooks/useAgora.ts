@@ -2,18 +2,24 @@ import { useState } from "react";
 import { useSnackbar } from "notistack";
 import { useSelector } from "react-redux";
 import { RootState } from "../app/store";
-import AgoraRTC from "../utils/AgoraEnhancer";
+import AgoraRTC, { AgoraClientType } from "../utils/AgoraEnhancer";
 import useMediaStream from "./useMediaStream";
 
 const useAgora = () => {
-  const [agoraClient, setClient] = useState<any>(undefined);
+  const [agoraClient, setClient] = useState<AgoraClientType | undefined>(
+    undefined
+  );
   const [isLoading, setIsLoading] = useState(false);
   const [isJoined, setisJoined] = useState(false);
   const [isPublished, setIsPublished] = useState(false);
   const state = useSelector((state: RootState) => state.videoCall);
   const { enqueueSnackbar } = useSnackbar();
-
-  const [localStream, remoteStreamList] = useMediaStream(agoraClient);
+  const {
+    localStream,
+    remoteStreamList,
+    setLocalStream,
+    setRemoteStreamList,
+  } = useMediaStream(agoraClient);
 
   const join = async () => {
     // Creates a new agora client with given parameters.
@@ -63,6 +69,10 @@ const useAgora = () => {
 
   // Leaves the channel on invoking the function call.
   const leave = async () => {
+    if (!agoraClient) {
+      return;
+    }
+
     setIsLoading(true);
     try {
       if (localStream) {
@@ -73,6 +83,10 @@ const useAgora = () => {
       }
       // leave the channel
       await agoraClient.leave();
+
+      setLocalStream(undefined);
+      setRemoteStreamList([]);
+
       setIsPublished(false);
       setisJoined(false);
       enqueueSnackbar("Left channel", { variant: "info" });
@@ -83,7 +97,15 @@ const useAgora = () => {
     }
   };
 
-  return { localStream, isLoading, isPublished, isJoined, join, leave };
+  return {
+    localStream,
+    remoteStreamList,
+    isLoading,
+    isPublished,
+    isJoined,
+    join,
+    leave,
+  };
 };
 
 export default useAgora;

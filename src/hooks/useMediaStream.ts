@@ -1,9 +1,10 @@
 import { useState, useEffect } from "react";
+import { AgoraClientType } from "../utils/AgoraEnhancer";
 
 const useMediaStream = (
-  client: any,
+  client?: AgoraClientType,
   filter?: (streamId: number) => boolean
-): any[] => {
+) => {
   const [localStream, setLocalStream] = useState<any>(undefined);
   const [remoteStreamList, setRemoteStreamList] = useState<any[]>([]);
 
@@ -19,6 +20,7 @@ const useMediaStream = (
     };
     // remove stream
     const removeRemote = (evt: any) => {
+      console.log("removeRemote");
       const { stream } = evt;
       if (stream) {
         const id = stream.getId();
@@ -33,15 +35,15 @@ const useMediaStream = (
     };
     // subscribe when added
     const doSub = (evt: any) => {
-      if (!mounted) {
+      if (!mounted || !client) {
         return;
       }
       if (filter) {
         if (filter(evt.stream.getId())) {
-          client.subscribe(evt.stream);
+          client.subscribe(evt.stream, { video: true, audio: true });
         }
       } else {
-        client.subscribe(evt.stream);
+        client.subscribe(evt.stream, { video: true, audio: true });
       }
     };
     // add when published
@@ -75,26 +77,21 @@ const useMediaStream = (
       mounted = false;
       if (client) {
         // Maintains the list of users based on the various network events.
-        client.gatewayClient.removeEventListener("stream-published", addLocal);
-        client.gatewayClient.removeEventListener("stream-added", doSub);
-        client.gatewayClient.removeEventListener(
-          "stream-subscribed",
-          addRemote
-        );
-        client.gatewayClient.removeEventListener("peer-leave", removeRemote);
-        client.gatewayClient.removeEventListener(
-          "stream-removed",
-          removeRemote
-        );
+        client.off("stream-published", addLocal);
+        client.off("stream-added", doSub);
+        client.off("stream-subscribed", addRemote);
+        client.off("peer-leave", removeRemote);
+        client.off("stream-removed", removeRemote);
       }
     };
   }, [client, filter, remoteStreamList]);
 
-  return [
+  return {
     localStream,
     remoteStreamList,
-    [localStream].concat(remoteStreamList),
-  ];
+    setLocalStream,
+    setRemoteStreamList,
+  };
 };
 
 export default useMediaStream;
