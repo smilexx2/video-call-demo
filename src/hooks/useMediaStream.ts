@@ -5,7 +5,9 @@ const useMediaStream = (
   client?: AgoraClientType,
   filter?: (streamId: number) => boolean
 ) => {
-  const [localStream, setLocalStream] = useState<any>(undefined);
+  const [localStream, setLocalStream] = useState<AgoraRTC.Stream | undefined>(
+    undefined
+  );
   const [remoteStreamList, setRemoteStreamList] = useState<any[]>([]);
 
   useEffect(() => {
@@ -20,17 +22,14 @@ const useMediaStream = (
     };
     // remove stream
     const removeRemote = (evt: any) => {
-      console.log("removeRemote");
       const { stream } = evt;
       if (stream) {
         const id = stream.getId();
-        const index = remoteStreamList.findIndex((item) => item.getId() === id);
-        if (index !== -1) {
-          setRemoteStreamList((streamList) => {
-            streamList.splice(index, 1);
-            return streamList;
-          });
-        }
+        setRemoteStreamList((streamList) => {
+          const index = streamList.findIndex((item) => item.getId() === id);
+          streamList.splice(index, 1);
+          return [...streamList];
+        });
       }
     };
     // subscribe when added

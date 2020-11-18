@@ -97,6 +97,42 @@ const useAgora = () => {
     }
   };
 
+  // Publish function to publish the stream to Agora. No need to invoke this after join.
+  // This is to be invoke only after an unpublish
+  const publish = async () => {
+    if (!agoraClient) {
+      return;
+    }
+
+    setIsLoading(true);
+    try {
+      if (localStream) {
+        // Publish the stream to the channel.
+        await agoraClient.publish(localStream);
+        setIsPublished(true);
+      }
+      enqueueSnackbar("Stream published", { variant: "info" });
+    } catch (err) {
+      enqueueSnackbar(`Failed to publish, ${err}`, { variant: "error" });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Used to unpublish the stream.
+  const unpublish = () => {
+    if (!agoraClient) {
+      return;
+    }
+
+    if (localStream) {
+      // unpublish the stream from the client
+      agoraClient.unpublish(localStream);
+      setIsPublished(false);
+      enqueueSnackbar("Stream unpublished", { variant: "info" });
+    }
+  };
+
   return {
     localStream,
     remoteStreamList,
@@ -105,6 +141,8 @@ const useAgora = () => {
     isJoined,
     join,
     leave,
+    publish,
+    unpublish,
   };
 };
 

@@ -5,6 +5,7 @@ import Dialog from "@material-ui/core/Dialog";
 import StreamPlayer from "agora-stream-player";
 import styled from "styled-components";
 import JoinCard from "../../components/JoinCard";
+import ButtonGroup from "@material-ui/core/ButtonGroup";
 import { useAgora } from "../../hooks";
 
 const Container = styled.div`
@@ -50,7 +51,16 @@ const StreamPlayerWrapper = styled.div`
 `;
 
 const VideoCall: React.FunctionComponent = () => {
-  const { localStream, remoteStreamList, isJoined, join, leave } = useAgora();
+  const {
+    localStream,
+    remoteStreamList,
+    isJoined,
+    isPublished,
+    join,
+    leave,
+    publish,
+    unpublish,
+  } = useAgora();
 
   const handleJoinButtonClick = () => {
     join();
@@ -60,6 +70,10 @@ const VideoCall: React.FunctionComponent = () => {
     leave();
   };
 
+  const handlePublishButton = () => {
+    isPublished ? unpublish() : publish();
+  };
+
   return (
     <>
       <Container>
@@ -67,10 +81,9 @@ const VideoCall: React.FunctionComponent = () => {
       </Container>
       <Dialog fullScreen open={isJoined}>
         <DialogContainer>
-          {remoteStreamList.map((stream: any) => (
-            <StreamPlayerWrapper>
+          {remoteStreamList.map((stream) => (
+            <StreamPlayerWrapper key={stream.getId()}>
               <StreamPlayer
-                key={stream.getId()}
                 stream={stream}
                 fit="cover"
                 style={{ width: "100%", height: "100%" }}
@@ -80,18 +93,19 @@ const VideoCall: React.FunctionComponent = () => {
           <BottomPanel>
             <LeftSpace></LeftSpace>
             <MiddleSpace>
-              <Button
-                variant="contained"
-                color="secondary"
-                onClick={handleLeaveButtonClick}
-              >
-                LEAVE
-              </Button>
+              <ButtonGroup disableElevation variant="contained">
+                <Button onClick={handlePublishButton}>
+                  {isPublished ? "Unpublish" : "Publish"}
+                </Button>
+                <Button color="secondary" onClick={handleLeaveButtonClick}>
+                  LEAVE
+                </Button>
+              </ButtonGroup>
             </MiddleSpace>
             <RightSpace>
               {localStream && (
                 <Card style={{ margin: 8 }} variant="outlined">
-                  <StreamPlayer stream={localStream} />
+                  <StreamPlayer video={isPublished} stream={localStream} />
                 </Card>
               )}
             </RightSpace>
