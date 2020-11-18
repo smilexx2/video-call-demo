@@ -1,10 +1,11 @@
 import React from "react";
-import MuiButton from "@material-ui/core/Button";
-import MuiCard from "@material-ui/core/Card";
-import MuiCardContent from "@material-ui/core/CardContent";
-import Grid from "@material-ui/core/Grid";
+import { Button } from "@material-ui/core";
+import Card from "@material-ui/core/Card";
+import Dialog from "@material-ui/core/Dialog";
+import StreamPlayer from "agora-stream-player";
 import styled from "styled-components";
-import { ReactComponent as Empty } from "../../assets/laptop.svg";
+import JoinCard from "../../components/JoinCard";
+import { useAgora } from "../../hooks";
 
 const Container = styled.div`
   display: flex;
@@ -13,49 +14,75 @@ const Container = styled.div`
   height: 100vh;
 `;
 
-const EmptyWrapper = styled.div`
-  padding: 40px;
-  text-align: center;
-`;
-
-const StyledEmpty = styled(Empty)`
-  width: 160px;
-  height: 160px;
-`;
-
-const Card = styled(MuiCard)`
-  max-width: 400px;
+const DialogContainer = styled.div`
   width: 100%;
+  height: 100%;
+`;
+
+const BottomPanel = styled.div`
+  width: 100%;
+  position: absolute;
+  bottom: 0;
+  min-height: 100px;
+  display: flex;
+  justify-content: space-between;
+`;
+
+const LeftSpace = styled.div`
+  flex: 1;
+`;
+
+const MiddleSpace = styled.div`
+  display: flex;
+  align-items: center;
+`;
+
+const RightSpace = styled.div`
+  flex: 1;
+  display: flex;
+  justify-content: flex-end;
 `;
 
 const VideoCall: React.FunctionComponent = () => {
+  const { localStream, isJoined, join, leave } = useAgora();
+
+  const handleJoinButtonClick = () => {
+    join();
+  };
+
+  const handleLeaveButtonClick = () => {
+    leave();
+  };
+
   return (
-    <Container>
-      <Card>
-        <MuiCardContent>
-          <Grid container direction="column">
-            <EmptyWrapper>
-              <StyledEmpty />
-              <p style={{ display: "none" }}>
-                Icons made by{" "}
-                <a
-                  href="https://www.flaticon.com/free-icon/laptop_3492203?term=video%20conference&page=2&position=57"
-                  title="catkuro"
-                >
-                  catkuro
-                </a>{" "}
-                from{" "}
-                <a href="https://www.flaticon.com/" title="Flaticon">
-                  {" "}
-                  www.flaticon.com
-                </a>
-              </p>
-            </EmptyWrapper>
-            <MuiButton color="primary">Join Channel</MuiButton>
-          </Grid>
-        </MuiCardContent>
-      </Card>
-    </Container>
+    <>
+      <Container>
+        <JoinCard onJoinButtonClick={handleJoinButtonClick} />
+      </Container>
+      <Dialog fullScreen open={isJoined}>
+        <DialogContainer>
+          <BottomPanel>
+            <LeftSpace></LeftSpace>
+            <MiddleSpace>
+              <Button
+                variant="contained"
+                color="secondary"
+                onClick={handleLeaveButtonClick}
+              >
+                LEAVE
+              </Button>
+            </MiddleSpace>
+            <RightSpace>
+              {localStream && (
+                <Card style={{ margin: 8 }}>
+                  <StreamPlayer stream={localStream} />
+                </Card>
+              )}
+            </RightSpace>
+          </BottomPanel>
+        </DialogContainer>
+      </Dialog>
+    </>
   );
 };
 
