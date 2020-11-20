@@ -10,10 +10,13 @@ import TextField from "@material-ui/core/TextField";
 import { useDispatch, useSelector } from "react-redux";
 import styled, { css } from "styled-components";
 import { RootState } from "../../app/store";
-import JoinCard from "../../components/JoinCard";
+import ChannelCard from "../../components/ChannelCard";
 import RemoteStreamView from "../../components/RemoteStreamView";
 import { useAgora } from "../../hooks";
+import ConfigureChannelDialog from "./ConfigureChannelDialog";
 import { updateState } from "./videoCallSlice";
+import Fab from "@material-ui/core/Fab";
+import EditIcon from "@material-ui/icons/Edit";
 
 const Container = styled.div`
   display: flex;
@@ -60,6 +63,12 @@ const LocalVideoPlaceholder = styled(({ isJoined, ...rest }) => (
     `}
 `;
 
+const ConfigureChannelFab = styled(Fab)`
+  position: absolute;
+  bottom: 16px;
+  right: 16px;
+`;
+
 const VideoCall: React.FunctionComponent = () => {
   const {
     remoteStreamList,
@@ -74,8 +83,12 @@ const VideoCall: React.FunctionComponent = () => {
   } = useAgora();
 
   const [isSettingOpen, setSettingOpen] = React.useState(false);
+  const [isConfigureChannelOpen, setConfigureChannelOpen] = React.useState(
+    false
+  );
+
   const dispatch = useDispatch();
-  const { cameraId, microphoneId } = useSelector(
+  const { cameraId, microphoneId, isChannelConfigured } = useSelector(
     (state: RootState) => state.videoCall
   );
 
@@ -101,6 +114,10 @@ const VideoCall: React.FunctionComponent = () => {
     join();
   };
 
+  const handleConfigureButtonClick = () => {
+    setConfigureChannelOpen(true);
+  };
+
   const handleLeaveButtonClick = () => {
     leave();
   };
@@ -113,7 +130,7 @@ const VideoCall: React.FunctionComponent = () => {
     setSettingOpen(true);
   };
 
-  const handleDialogClose = () => {
+  const handleSettingDialogClose = () => {
     setSettingOpen(false);
   };
 
@@ -126,10 +143,36 @@ const VideoCall: React.FunctionComponent = () => {
     );
   };
 
+  const handleConfigureDialogClose = () => {
+    setConfigureChannelOpen(false);
+  };
+
+  const handleRemoveButtonClick = () => {};
+
   return (
     <>
       <Container>
-        <JoinCard onJoinButtonClick={handleJoinButtonClick} />
+        <ChannelCard>
+          {isChannelConfigured ? (
+            <Button
+              onClick={handleJoinButtonClick}
+              variant="contained"
+              fullWidth
+              color="primary"
+            >
+              Join Channel
+            </Button>
+          ) : (
+            <Button
+              onClick={handleConfigureButtonClick}
+              fullWidth
+              variant="contained"
+              disableElevation
+            >
+              Configure Channel
+            </Button>
+          )}
+        </ChannelCard>
       </Container>
       <Dialog fullScreen open={isJoined} fullWidth>
         <DialogContainer>
@@ -149,7 +192,7 @@ const VideoCall: React.FunctionComponent = () => {
           </BottomPanel>
         </DialogContainer>
       </Dialog>
-      <Dialog open={isSettingOpen} onClose={handleDialogClose} fullWidth>
+      <Dialog open={isSettingOpen} onClose={handleSettingDialogClose} fullWidth>
         <DialogTitle>Settings</DialogTitle>
         <DialogContent>
           <TextField
@@ -188,6 +231,19 @@ const VideoCall: React.FunctionComponent = () => {
           </TextField>
         </DialogContent>
       </Dialog>
+      <ConfigureChannelDialog
+        isDialogOpen={isConfigureChannelOpen}
+        onDialogClose={handleConfigureDialogClose}
+      />
+      {isChannelConfigured && (
+        <ConfigureChannelFab
+          variant="extended"
+          onClick={handleConfigureButtonClick}
+        >
+          <EditIcon style={{ marginRight: 8 }} />
+          Configure Channel
+        </ConfigureChannelFab>
+      )}
       <LocalVideoPlaceholder
         variant="outlined"
         id="local_stream"

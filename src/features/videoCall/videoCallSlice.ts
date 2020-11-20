@@ -1,37 +1,68 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 type VideoCallState = {
-  appId: string;
-  channel: string;
-  uid: string;
+  appId: string | null;
+  channel: string | null;
   token: string | null;
+  uid: string;
   cameraId?: string;
-  microphoneId: string;
+  microphoneId?: string;
   mode: "rtc" | "live";
   codec: "h264" | "vp8";
+  isChannelConfigured: boolean;
 };
 
 const initialState: VideoCallState = {
-  appId: "4b32d52f09e64eeda2fb482514669448",
-  channel: "test",
+  appId: localStorage.getItem("appId"),
+  channel: localStorage.getItem("channel"),
+  token: localStorage.getItem("token"),
   uid: "",
-  token:
-    "0064b32d52f09e64eeda2fb482514669448IABW93hjt7JmyfC/XyPUPrKhDXedQyUNDGe3OrA6nhCh5wx+f9gAAAAAEABID2Uq8XW4XwEAAQDxdbhf",
   cameraId: undefined,
   microphoneId: "",
   mode: "rtc",
   codec: "h264",
+  isChannelConfigured: JSON.parse(
+    localStorage.getItem("isChannelConfigured") || "false"
+  ),
 };
 
 export const videoCallSlice = createSlice({
   name: "videoCall",
   initialState,
   reducers: {
-    updateState: (state, action: PayloadAction<any | undefined>) => {
+    updateState: (
+      state,
+      action: PayloadAction<{
+        name: string;
+        value: string;
+      }>
+    ) => {
       const { name, value } = action.payload;
       return {
         ...state,
         [name]: value,
+      };
+    },
+    configureChannel: (
+      state,
+      action: PayloadAction<{
+        appId: string;
+        channel: string;
+        token: string;
+      }>
+    ) => {
+      const { appId, channel, token } = action.payload;
+      return {
+        ...state,
+        appId,
+        channel,
+        token,
+      };
+    },
+    setChannelConfigured: (state, action: PayloadAction<boolean>) => {
+      return {
+        ...state,
+        isChannelConfigured: action.payload,
       };
     },
   },
@@ -39,6 +70,6 @@ export const videoCallSlice = createSlice({
 
 const { actions, reducer } = videoCallSlice;
 
-export const { updateState } = actions;
+export const { updateState, configureChannel, setChannelConfigured } = actions;
 
 export default reducer;
