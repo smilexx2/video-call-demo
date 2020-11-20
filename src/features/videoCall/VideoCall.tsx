@@ -1,13 +1,19 @@
 import React from "react";
 import Button from "@material-ui/core/Button";
+import ButtonGroup from "@material-ui/core/ButtonGroup";
 import Card from "@material-ui/core/Card";
 import Dialog from "@material-ui/core/Dialog";
-import StreamPlayer from "agora-stream-player";
-import styled from "styled-components";
+import DialogContent from "@material-ui/core/DialogContent";
+import DialogTitle from "@material-ui/core/DialogTitle";
+import MenuItem from "@material-ui/core/MenuItem";
+import TextField from "@material-ui/core/TextField";
+import { useDispatch, useSelector } from "react-redux";
+import styled, { css } from "styled-components";
+import { RootState } from "../../app/store";
 import JoinCard from "../../components/JoinCard";
 import RemoteStreamView from "../../components/RemoteStreamView";
-import ButtonGroup from "@material-ui/core/ButtonGroup";
-import { useAgora } from "../../hooks";
+import { useAgora, useCamera } from "../../hooks";
+import { updateState } from "./videoCallSlice";
 
 const Container = styled.div`
   display: flex;
@@ -47,10 +53,25 @@ const RightSpace = styled.div`
   justify-content: flex-end;
 `;
 
+const LocalVideoPlaceholder = styled(Card)<{ isJoined: boolean }>`
+  width: 240px;
+  height: 180px;
+  margin: 8px;
+  position: absolute;
+  z-index: 9999;
+  bottom: 0;
+  right: 0;
+  ${({ isJoined }) =>
+    !isJoined &&
+    css`
+      display: none;
+    `}
+`;
+
 const VideoCall: React.FunctionComponent = () => {
   const {
-    localStream,
     remoteStreamList,
+    cameraList,
     isJoined,
     isPublished,
     join,
@@ -58,6 +79,10 @@ const VideoCall: React.FunctionComponent = () => {
     publish,
     unpublish,
   } = useAgora();
+
+  const [isSettingOpen, setSettingOpen] = React.useState(false);
+  const dispatch = useDispatch();
+  const { cameraId } = useSelector((state: RootState) => state.videoCall);
 
   const handleJoinButtonClick = () => {
     join();
@@ -67,8 +92,25 @@ const VideoCall: React.FunctionComponent = () => {
     leave();
   };
 
-  const handlePublishButton = () => {
-    isPublished ? unpublish() : publish();
+  const handlePublishButtonClick = async () => {
+    (await isPublished) ? unpublish() : publish();
+  };
+
+  const handleSettingButtonClick = () => {
+    setSettingOpen(true);
+  };
+
+  const handleDialogClose = () => {
+    setSettingOpen(false);
+  };
+
+  const update = (e: React.ChangeEvent<unknown>) => {
+    return dispatch(
+      updateState({
+        name: (e.target as HTMLInputElement).name,
+        value: (e.target as HTMLInputElement).value,
+      })
+    );
   };
 
   return (
@@ -76,14 +118,15 @@ const VideoCall: React.FunctionComponent = () => {
       <Container>
         <JoinCard onJoinButtonClick={handleJoinButtonClick} />
       </Container>
-      <Dialog fullScreen open={isJoined}>
+      <Dialog fullScreen open={isJoined} fullWidth>
         <DialogContainer>
           <RemoteStreamView remoteStreamList={remoteStreamList} />
           <BottomPanel>
             <LeftSpace></LeftSpace>
             <MiddleSpace>
               <ButtonGroup disableElevation variant="contained">
-                <Button onClick={handlePublishButton}>
+                <Button onClick={handleSettingButtonClick}>Settings</Button>
+                <Button onClick={handlePublishButtonClick}>
                   {isPublished ? "Unpublish" : "Publish"}
                 </Button>
                 <Button color="secondary" onClick={handleLeaveButtonClick}>
@@ -92,15 +135,40 @@ const VideoCall: React.FunctionComponent = () => {
               </ButtonGroup>
             </MiddleSpace>
             <RightSpace>
-              {localStream && (
-                <Card style={{ margin: 8 }} variant="outlined">
+              {/* {localStream && (
                   <StreamPlayer video={isPublished} stream={localStream} />
-                </Card>
-              )}
+                )} */}
             </RightSpace>
           </BottomPanel>
         </DialogContainer>
       </Dialog>
+      <Dialog open={isSettingOpen} onClose={handleDialogClose} fullWidth>
+        <DialogTitle>Settings</DialogTitle>
+        <DialogContent>
+          <TextField
+            id="cameraId"
+            name="cameraId"
+            value={cameraId || ""}
+            onChange={update}
+            select
+            label="Camera"
+            helperText="Please select your camera"
+            fullWidth
+            margin="normal"
+          >
+            {cameraList.map((item) => (
+              <MenuItem key={item.deviceId} value={item.deviceId}>
+                {item.label}
+              </MenuItem>
+            ))}
+          </TextField>
+        </DialogContent>
+      </Dialog>
+      <LocalVideoPlaceholder
+        variant="outlined"
+        id="local_stream"
+        isJoined={isJoined}
+      ></LocalVideoPlaceholder>
     </>
   );
 };

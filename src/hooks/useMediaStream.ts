@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { AgoraClientType } from "../utils/AgoraEnhancer";
+import { useSnackbar } from "notistack";
 
 const useMediaStream = (
   client?: AgoraClientType,
@@ -11,6 +12,7 @@ const useMediaStream = (
   const [remoteStreamList, setRemoteStreamList] = useState<AgoraRTC.Stream[]>(
     []
   );
+  const { enqueueSnackbar } = useSnackbar();
 
   useEffect(() => {
     let mounted = true;
@@ -47,27 +49,13 @@ const useMediaStream = (
         client.subscribe(evt.stream, { video: true, audio: true });
       }
     };
-    // add when published
-    const addLocal = (evt: any) => {
-      if (!mounted) {
-        return;
-      }
-      const { stream } = evt;
-      const stop = stream.stop;
-      const close = stream.close;
-      stream.close = ((func) => () => {
-        func();
-        setLocalStream(undefined);
-      })(close);
-      stream.stop = ((func) => () => {
-        func();
-        setLocalStream(undefined);
-      })(stop);
-      setLocalStream(stream);
+
+    const onStreamPublished = (evt: any) => {
+      enqueueSnackbar(`stream published success`, { variant: "info" });
     };
 
     if (client) {
-      client.on("stream-published", addLocal);
+      client.on("stream-published", () => onStreamPublished);
       client.on("stream-added", doSub);
       client.on("stream-subscribed", addRemote);
       client.on("peer-leave", removeRemote);
@@ -75,18 +63,17 @@ const useMediaStream = (
     }
 
     return () => {
-      console.log("unmount");
       mounted = false;
       if (client) {
         // Maintains the list of users based on the various network events.
-        client.off("stream-published", addLocal);
+        client.off("stream-published", onStreamPublished);
         client.off("stream-added", doSub);
         client.off("stream-subscribed", addRemote);
         client.off("peer-leave", removeRemote);
         client.off("stream-removed", removeRemote);
       }
     };
-  }, [client, filter]);
+  }, [client, filter, enqueueSnackbar]);
 
   return {
     localStream,

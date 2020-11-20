@@ -1,9 +1,10 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useSnackbar } from "notistack";
 import { useSelector } from "react-redux";
 import { RootState } from "../app/store";
 import AgoraRTC, { AgoraClientType } from "../utils/AgoraEnhancer";
 import useMediaStream from "./useMediaStream";
+import useCamera from "./useCamera";
 
 const useAgora = () => {
   const [agoraClient, setClient] = useState<AgoraClientType | undefined>(
@@ -20,6 +21,14 @@ const useAgora = () => {
     setLocalStream,
     setRemoteStreamList,
   } = useMediaStream(agoraClient);
+  const cameraList = useCamera(agoraClient);
+
+  useEffect(() => {
+    if (!state.cameraId || !localStream) {
+      return;
+    }
+    localStream.switchDevice("video", state.cameraId);
+  }, [state.cameraId, localStream]);
 
   const join = async () => {
     // Creates a new agora client with given parameters.
@@ -47,11 +56,14 @@ const useAgora = () => {
         audio: true,
         screen: false,
       });
+      setLocalStream(stream);
 
       // stream.setVideoProfile('480p_4')
 
       // Initalize the stream
       await stream.init();
+
+      stream.play("local_stream");
 
       // Publish the stream to the channel.
       await client.publish(stream);
@@ -69,24 +81,22 @@ const useAgora = () => {
 
   // Leaves the channel on invoking the function call.
   const leave = async () => {
-    if (!agoraClient) {
+    if (!agoraClient || !localStream) {
       return;
     }
 
     setIsLoading(true);
     try {
-      if (localStream) {
-        // Closes the local stream. This de-allocates the resources and turns off the camera light
-        localStream.close();
-        // unpublish the stream from the client
-        agoraClient.unpublish(localStream);
-      }
-      // leave the channel
       await agoraClient.leave();
+
+      if (localStream.isPlaying()) {
+        localStream.stop();
+      }
+      localStream.close();
 
       setLocalStream(undefined);
       setRemoteStreamList([]);
-
+      setClient(undefined);
       setIsPublished(false);
       setisJoined(false);
       enqueueSnackbar("Left channel", { variant: "info" });
@@ -100,17 +110,15 @@ const useAgora = () => {
   // Publish function to publish the stream to Agora. No need to invoke this after join.
   // This is to be invoke only after an unpublish
   const publish = async () => {
-    if (!agoraClient) {
+    if (!agoraClient || !localStream) {
       return;
     }
 
     setIsLoading(true);
     try {
-      if (localStream) {
-        // Publish the stream to the channel.
-        await agoraClient.publish(localStream);
-        setIsPublished(true);
-      }
+      // Publish the stream to the channel.
+      await agoraClient.publish(localStream);
+      setIsPublished(true);
       enqueueSnackbar("Stream published", { variant: "info" });
     } catch (err) {
       enqueueSnackbar(`Failed to publish, ${err}`, { variant: "error" });
@@ -120,22 +128,22 @@ const useAgora = () => {
   };
 
   // Used to unpublish the stream.
-  const unpublish = () => {
-    if (!agoraClient) {
+  const unpublish = async () => {
+    if (!agoraClient || !localStream) {
       return;
     }
 
-    if (localStream) {
-      // unpublish the stream from the client
-      agoraClient.unpublish(localStream);
-      setIsPublished(false);
-      enqueueSnackbar("Stream unpublished", { variant: "info" });
-    }
+    // unpublish the stream from the client
+    await agoraClient.unpublish(localStream);
+    setIsPublished(false);
+    enqueueSnackbar("Stream unpublished", { variant: "info" });
   };
 
   return {
+    agoraClient,
     localStream,
     remoteStreamList,
+    cameraList,
     isLoading,
     isPublished,
     isJoined,
