@@ -8,7 +8,9 @@ const useMediaStream = (
   const [localStream, setLocalStream] = useState<AgoraRTC.Stream | undefined>(
     undefined
   );
-  const [remoteStreamList, setRemoteStreamList] = useState<any[]>([]);
+  const [remoteStreamList, setRemoteStreamList] = useState<AgoraRTC.Stream[]>(
+    []
+  );
 
   useEffect(() => {
     let mounted = true;
@@ -73,6 +75,7 @@ const useMediaStream = (
     }
 
     return () => {
+      console.log("unmount");
       mounted = false;
       if (client) {
         // Maintains the list of users based on the various network events.
@@ -83,7 +86,7 @@ const useMediaStream = (
         client.off("stream-removed", removeRemote);
       }
     };
-  }, [client, filter, remoteStreamList]);
+  }, [client, filter]);
 
   return {
     localStream,

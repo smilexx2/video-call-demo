@@ -1,10 +1,11 @@
 import React from "react";
-import { Button } from "@material-ui/core";
+import Button from "@material-ui/core/Button";
 import Card from "@material-ui/core/Card";
 import Dialog from "@material-ui/core/Dialog";
 import StreamPlayer from "agora-stream-player";
 import styled from "styled-components";
 import JoinCard from "../../components/JoinCard";
+import RemoteStreamView from "../../components/RemoteStreamView";
 import ButtonGroup from "@material-ui/core/ButtonGroup";
 import { useAgora } from "../../hooks";
 
@@ -12,7 +13,7 @@ const Container = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100vh;
+  min-height: 100vh;
 `;
 
 const DialogContainer = styled.div`
@@ -46,10 +47,6 @@ const RightSpace = styled.div`
   justify-content: flex-end;
 `;
 
-const StreamPlayerWrapper = styled.div`
-  flex: 1 0 25%;
-`;
-
 const VideoCall: React.FunctionComponent = () => {
   const {
     localStream,
@@ -81,15 +78,7 @@ const VideoCall: React.FunctionComponent = () => {
       </Container>
       <Dialog fullScreen open={isJoined}>
         <DialogContainer>
-          {remoteStreamList.map((stream) => (
-            <StreamPlayerWrapper key={stream.getId()}>
-              <StreamPlayer
-                stream={stream}
-                fit="cover"
-                style={{ width: "100%", height: "100%" }}
-              />
-            </StreamPlayerWrapper>
-          ))}
+          <RemoteStreamView remoteStreamList={remoteStreamList} />
           <BottomPanel>
             <LeftSpace></LeftSpace>
             <MiddleSpace>
