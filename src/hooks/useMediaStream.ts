@@ -1,6 +1,6 @@
-import { useState, useEffect } from "react";
-import { AgoraClientType } from "../utils/AgoraEnhancer";
+import { useEffect, useState } from "react";
 import { useSnackbar } from "notistack";
+import { AgoraClientType } from "../utils/AgoraEnhancer";
 
 const useMediaStream = (
   client?: AgoraClientType,

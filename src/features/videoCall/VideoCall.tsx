@@ -5,18 +5,18 @@ import Card from "@material-ui/core/Card";
 import Dialog from "@material-ui/core/Dialog";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogTitle from "@material-ui/core/DialogTitle";
+import Fab from "@material-ui/core/Fab";
 import MenuItem from "@material-ui/core/MenuItem";
 import TextField from "@material-ui/core/TextField";
+import EditIcon from "@material-ui/icons/Edit";
 import { useDispatch, useSelector } from "react-redux";
 import styled, { css } from "styled-components";
 import { RootState } from "../../app/store";
 import ChannelCard from "../../components/ChannelCard";
 import RemoteStreamView from "../../components/RemoteStreamView";
 import { useAgora } from "../../hooks";
-import ConfigureChannelDialog from "./ConfigureChannelDialog";
+import ConfigureChannelForm from "../../components/ConfigureChannelForm";
 import { updateState } from "./videoCallSlice";
-import Fab from "@material-ui/core/Fab";
-import EditIcon from "@material-ui/icons/Edit";
 
 const Container = styled.div`
   display: flex;
@@ -134,6 +134,10 @@ const VideoCall: React.FunctionComponent = () => {
     setSettingOpen(false);
   };
 
+  const handleConfigureDialogClose = () => {
+    setConfigureChannelOpen(false);
+  };
+
   const update = (e: React.ChangeEvent<unknown>) => {
     return dispatch(
       updateState({
@@ -142,12 +146,6 @@ const VideoCall: React.FunctionComponent = () => {
       })
     );
   };
-
-  const handleConfigureDialogClose = () => {
-    setConfigureChannelOpen(false);
-  };
-
-  const handleRemoveButtonClick = () => {};
 
   return (
     <>
@@ -231,10 +229,9 @@ const VideoCall: React.FunctionComponent = () => {
           </TextField>
         </DialogContent>
       </Dialog>
-      <ConfigureChannelDialog
-        isDialogOpen={isConfigureChannelOpen}
-        onDialogClose={handleConfigureDialogClose}
-      />
+      <Dialog open={isConfigureChannelOpen}>
+        <ConfigureChannelForm onDialogClose={handleConfigureDialogClose} />
+      </Dialog>
       {isChannelConfigured && (
         <ConfigureChannelFab
           variant="extended"

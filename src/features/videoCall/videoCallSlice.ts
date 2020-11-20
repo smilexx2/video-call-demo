@@ -1,9 +1,9 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 type VideoCallState = {
-  appId: string | null;
-  channel: string | null;
-  token: string | null;
+  appId: string;
+  channel: string;
+  token: string;
   uid: string;
   cameraId?: string;
   microphoneId?: string;
@@ -13,9 +13,9 @@ type VideoCallState = {
 };
 
 const initialState: VideoCallState = {
-  appId: localStorage.getItem("appId"),
-  channel: localStorage.getItem("channel"),
-  token: localStorage.getItem("token"),
+  appId: localStorage.getItem("appId") || "",
+  channel: localStorage.getItem("channel") || "",
+  token: localStorage.getItem("token") || "",
   uid: "",
   cameraId: undefined,
   microphoneId: "",
