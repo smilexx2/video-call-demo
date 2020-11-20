@@ -59,19 +59,19 @@ const ConfigureChannelDialog: React.FunctionComponent<{
     }
   };
 
-  const handleRemoveButtonClick = () => {
+  const handleRemoveButtonClick = async () => {
     localStorage.removeItem("appId");
     localStorage.removeItem("channel");
     localStorage.removeItem("token");
     localStorage.removeItem("isChannelConfigured");
     onDialogClose();
     dispatch(setChannelConfigured(false));
-    formik.setValues({
+    await formik.setValues({
       appId: "",
       channel: "",
       token: "",
     });
-    formik.setTouched({
+    await formik.setTouched({
       appId: false,
       channel: false,
       token: false,
