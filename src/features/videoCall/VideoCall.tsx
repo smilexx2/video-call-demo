@@ -32,25 +32,15 @@ const BottomPanel = styled.div`
   width: 100%;
   position: absolute;
   bottom: 0;
-  min-height: 100px;
+  height: 196px;
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   z-index: 9999;
 `;
 
-const LeftSpace = styled.div`
-  flex: 1;
-`;
-
-const MiddleSpace = styled.div`
+const ButtonGroupWrapper = styled.div`
   display: flex;
   align-items: center;
-`;
-
-const RightSpace = styled.div`
-  flex: 1;
-  display: flex;
-  justify-content: flex-end;
 `;
 
 const LocalVideoPlaceholder = styled(Card)<{ isJoined: boolean }>`
@@ -143,8 +133,7 @@ const VideoCall: React.FunctionComponent = () => {
         <DialogContainer>
           <RemoteStreamView remoteStreamList={remoteStreamList} />
           <BottomPanel>
-            <LeftSpace></LeftSpace>
-            <MiddleSpace>
+            <ButtonGroupWrapper>
               <ButtonGroup disableElevation variant="contained">
                 <Button onClick={handleSettingButtonClick}>Settings</Button>
                 <Button onClick={handlePublishButtonClick}>
@@ -154,12 +143,7 @@ const VideoCall: React.FunctionComponent = () => {
                   LEAVE
                 </Button>
               </ButtonGroup>
-            </MiddleSpace>
-            <RightSpace>
-              {/* {localStream && (
-                  <StreamPlayer video={isPublished} stream={localStream} />
-                )} */}
-            </RightSpace>
+            </ButtonGroupWrapper>
           </BottomPanel>
         </DialogContainer>
       </Dialog>
@@ -206,7 +190,7 @@ const VideoCall: React.FunctionComponent = () => {
         variant="outlined"
         id="local_stream"
         isJoined={isJoined}
-      ></LocalVideoPlaceholder>
+      />
     </>
   );
 };
