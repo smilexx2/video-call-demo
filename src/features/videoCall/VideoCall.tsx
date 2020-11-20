@@ -12,7 +12,7 @@ import styled, { css } from "styled-components";
 import { RootState } from "../../app/store";
 import JoinCard from "../../components/JoinCard";
 import RemoteStreamView from "../../components/RemoteStreamView";
-import { useAgora, useCamera } from "../../hooks";
+import { useAgora } from "../../hooks";
 import { updateState } from "./videoCallSlice";
 
 const Container = styled.div`
@@ -72,6 +72,7 @@ const VideoCall: React.FunctionComponent = () => {
   const {
     remoteStreamList,
     cameraList,
+    microphoneList,
     isJoined,
     isPublished,
     join,
@@ -82,7 +83,27 @@ const VideoCall: React.FunctionComponent = () => {
 
   const [isSettingOpen, setSettingOpen] = React.useState(false);
   const dispatch = useDispatch();
-  const { cameraId } = useSelector((state: RootState) => state.videoCall);
+  const { cameraId, microphoneId } = useSelector(
+    (state: RootState) => state.videoCall
+  );
+
+  React.useEffect(() => {
+    dispatch(
+      updateState({
+        name: "cameraId",
+        value: cameraList[0]?.deviceId,
+      })
+    );
+  }, [dispatch, cameraList]);
+
+  React.useEffect(() => {
+    dispatch(
+      updateState({
+        name: "microphoneId",
+        value: microphoneList[0]?.deviceId,
+      })
+    );
+  }, [dispatch, microphoneList]);
 
   const handleJoinButtonClick = () => {
     join();
@@ -93,7 +114,7 @@ const VideoCall: React.FunctionComponent = () => {
   };
 
   const handlePublishButtonClick = async () => {
-    (await isPublished) ? unpublish() : publish();
+    isPublished ? unpublish() : publish();
   };
 
   const handleSettingButtonClick = () => {
@@ -157,6 +178,23 @@ const VideoCall: React.FunctionComponent = () => {
             margin="normal"
           >
             {cameraList.map((item) => (
+              <MenuItem key={item.deviceId} value={item.deviceId}>
+                {item.label}
+              </MenuItem>
+            ))}
+          </TextField>
+          <TextField
+            id="microphoneId"
+            name="microphoneId"
+            value={microphoneId || ""}
+            onChange={update}
+            select
+            label="Microphone"
+            helperText="Please select your microphone"
+            fullWidth
+            margin="normal"
+          >
+            {microphoneList.map((item) => (
               <MenuItem key={item.deviceId} value={item.deviceId}>
                 {item.label}
               </MenuItem>

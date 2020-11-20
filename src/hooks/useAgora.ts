@@ -1,10 +1,9 @@
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useSnackbar } from "notistack";
 import { useSelector } from "react-redux";
+import { useCamera, useMediaStream, useMicrophone } from ".";
 import { RootState } from "../app/store";
 import AgoraRTC, { AgoraClientType } from "../utils/AgoraEnhancer";
-import useMediaStream from "./useMediaStream";
-import useCamera from "./useCamera";
 
 const useAgora = () => {
   const [agoraClient, setClient] = useState<AgoraClientType | undefined>(
@@ -22,6 +21,7 @@ const useAgora = () => {
     setRemoteStreamList,
   } = useMediaStream(agoraClient);
   const cameraList = useCamera(agoraClient);
+  const microphoneList = useMicrophone(agoraClient);
 
   useEffect(() => {
     if (!state.cameraId || !localStream) {
@@ -55,6 +55,8 @@ const useAgora = () => {
         video: true,
         audio: true,
         screen: false,
+        cameraId: cameraList[0]?.deviceId,
+        microphoneId: microphoneList[0]?.deviceId,
       });
       setLocalStream(stream);
 
@@ -144,6 +146,7 @@ const useAgora = () => {
     localStream,
     remoteStreamList,
     cameraList,
+    microphoneList,
     isLoading,
     isPublished,
     isJoined,
