@@ -43,7 +43,9 @@ const ButtonGroupWrapper = styled.div`
   align-items: center;
 `;
 
-const LocalVideoPlaceholder = styled(Card)<{ isJoined: boolean }>`
+const LocalVideoPlaceholder = styled(({ isJoined, ...rest }) => (
+  <Card {...rest} />
+))<{ isJoined: boolean }>`
   width: 240px;
   height: 180px;
   margin: 8px;
