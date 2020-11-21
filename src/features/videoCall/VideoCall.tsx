@@ -9,18 +9,18 @@ import Fab from "@material-ui/core/Fab";
 import MenuItem from "@material-ui/core/MenuItem";
 import TextField from "@material-ui/core/TextField";
 import EditIcon from "@material-ui/icons/Edit";
+import MicIcon from "@material-ui/icons/Mic";
+import MicOffIcon from "@material-ui/icons/MicOff";
+import VideocamIcon from "@material-ui/icons/Videocam";
+import VideocamOffIcon from "@material-ui/icons/VideocamOff";
 import { useDispatch, useSelector } from "react-redux";
 import styled, { css } from "styled-components";
 import { RootState } from "../../app/store";
 import ChannelCard from "../../components/ChannelCard";
+import ConfigureChannelForm from "../../components/ConfigureChannelForm";
 import RemoteStreamView from "../../components/RemoteStreamView";
 import { useAgora } from "../../hooks";
-import ConfigureChannelForm from "../../components/ConfigureChannelForm";
 import { updateState } from "./videoCallSlice";
-import VideocamIcon from "@material-ui/icons/Videocam";
-import MicIcon from "@material-ui/icons/Mic";
-import VideocamOffIcon from "@material-ui/icons/VideocamOff";
-import MicOffIcon from "@material-ui/icons/MicOff";
 
 const Container = styled.div`
   display: flex;

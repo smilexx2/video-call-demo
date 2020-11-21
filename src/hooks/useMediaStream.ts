@@ -2,6 +2,10 @@ import { useEffect, useState } from "react";
 import { useSnackbar } from "notistack";
 import { AgoraClientType } from "../utils/AgoraEnhancer";
 
+export interface RemoteStream extends AgoraRTC.Stream {
+  isAudioMuted: boolean;
+}
+
 const useMediaStream = (
   client?: AgoraClientType,
   filter?: (streamId: number) => boolean
@@ -9,9 +13,7 @@ const useMediaStream = (
   const [localStream, setLocalStream] = useState<AgoraRTC.Stream | undefined>(
     undefined
   );
-  const [remoteStreamList, setRemoteStreamList] = useState<AgoraRTC.Stream[]>(
-    []
-  );
+  const [remoteStreamList, setRemoteStreamList] = useState<RemoteStream[]>([]);
   const { enqueueSnackbar } = useSnackbar();
 
   useEffect(() => {
@@ -52,12 +54,42 @@ const useMediaStream = (
       enqueueSnackbar(`stream published success`, { variant: "info" });
     };
 
+    const onMuteAudio = (evt: any) => {
+      setRemoteStreamList((streamList) =>
+        streamList.map((stream) => {
+          if (stream.getId() === evt.uid) {
+            return {
+              ...stream,
+              isAudioMuted: true,
+            };
+          }
+          return stream;
+        })
+      );
+    };
+
+    const onUnmuteAudio = (evt: any) => {
+      setRemoteStreamList((streamList) =>
+        streamList.map((stream) => {
+          if (stream.getId() === evt.uid) {
+            return {
+              ...stream,
+              isAudioMuted: false,
+            };
+          }
+          return stream;
+        })
+      );
+    };
+
     if (client) {
       client.on("stream-published", () => onStreamPublished);
       client.on("stream-added", doSub);
       client.on("stream-subscribed", addRemote);
       client.on("peer-leave", removeRemote);
       client.on("stream-removed", removeRemote);
+      client.on("mute-audio", onMuteAudio);
+      client.on("unmute-audio", onUnmuteAudio);
     }
 
     return () => {
@@ -69,6 +101,7 @@ const useMediaStream = (
         client.off("stream-subscribed", addRemote);
         client.off("peer-leave", removeRemote);
         client.off("stream-removed", removeRemote);
+        client.off("mute-audio", onMuteAudio);
       }
     };
   }, [client, filter, enqueueSnackbar]);
