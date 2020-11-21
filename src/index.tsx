@@ -5,6 +5,7 @@ import { Provider } from "react-redux";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import { StylesProvider } from "@material-ui/core/styles";
 import App from "./App";
+import GlobalError from "./GlobalError";
 import store from "./app/store";
 import { SnackbarProvider } from "notistack";
 import "./index.css";
@@ -13,12 +14,14 @@ import reportWebVitals from "./reportWebVitals";
 ReactDOM.render(
   <React.StrictMode>
     <StylesProvider injectFirst>
-      <SnackbarProvider>
-        <Provider store={store}>
-          <CssBaseline />
-          <App />
-        </Provider>
-      </SnackbarProvider>
+      <GlobalError>
+        <SnackbarProvider>
+          <Provider store={store}>
+            <CssBaseline />
+            <App />
+          </Provider>
+        </SnackbarProvider>
+      </GlobalError>
     </StylesProvider>
   </React.StrictMode>,
   document.getElementById("root")
