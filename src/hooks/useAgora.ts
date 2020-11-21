@@ -12,6 +12,8 @@ const useAgora = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [isJoined, setisJoined] = useState(false);
   const [isPublished, setIsPublished] = useState(false);
+  const [isVideoMuted, setIsVideoMuted] = useState(false);
+  const [isAudioMuted, setIsAudioMuted] = useState(false);
   const state = useSelector((state: RootState) => state.videoCall);
   const { enqueueSnackbar } = useSnackbar();
   const {
@@ -148,6 +150,30 @@ const useAgora = () => {
     enqueueSnackbar("Stream unpublished", { variant: "info" });
   };
 
+  const muteVideo = () => {
+    localStream?.muteVideo();
+
+    setIsVideoMuted(true);
+  };
+
+  const unMuteVideo = () => {
+    localStream?.unmuteVideo();
+
+    setIsVideoMuted(false);
+  };
+
+  const muteAudio = () => {
+    localStream?.muteAudio();
+
+    setIsAudioMuted(true);
+  };
+
+  const unMuteAudio = () => {
+    localStream?.unmuteAudio();
+
+    setIsAudioMuted(false);
+  };
+
   return {
     agoraClient,
     localStream,
@@ -157,10 +183,16 @@ const useAgora = () => {
     isLoading,
     isPublished,
     isJoined,
+    isVideoMuted,
+    isAudioMuted,
     join,
     leave,
     publish,
     unpublish,
+    muteVideo,
+    unMuteVideo,
+    muteAudio,
+    unMuteAudio,
   };
 };
 

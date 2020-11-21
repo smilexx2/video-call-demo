@@ -17,6 +17,10 @@ import RemoteStreamView from "../../components/RemoteStreamView";
 import { useAgora } from "../../hooks";
 import ConfigureChannelForm from "../../components/ConfigureChannelForm";
 import { updateState } from "./videoCallSlice";
+import VideocamIcon from "@material-ui/icons/Videocam";
+import MicIcon from "@material-ui/icons/Mic";
+import VideocamOffIcon from "@material-ui/icons/VideocamOff";
+import MicOffIcon from "@material-ui/icons/MicOff";
 
 const Container = styled.div`
   display: flex;
@@ -76,10 +80,16 @@ const VideoCall: React.FunctionComponent = () => {
     microphoneList,
     isJoined,
     isPublished,
+    isVideoMuted,
+    isAudioMuted,
     join,
     leave,
     publish,
     unpublish,
+    muteVideo,
+    unMuteVideo,
+    muteAudio,
+    unMuteAudio,
   } = useAgora();
 
   const [isSettingOpen, setSettingOpen] = React.useState(false);
@@ -138,6 +148,14 @@ const VideoCall: React.FunctionComponent = () => {
     setConfigureChannelOpen(false);
   };
 
+  const handleVideoButtonClick = () => {
+    isVideoMuted ? unMuteVideo() : muteVideo();
+  };
+
+  const handleMicButtonClick = () => {
+    isAudioMuted ? unMuteAudio() : muteAudio();
+  };
+
   const update = (e: React.ChangeEvent<unknown>) => {
     return dispatch(
       updateState({
@@ -179,6 +197,12 @@ const VideoCall: React.FunctionComponent = () => {
             <ButtonGroupWrapper>
               <ButtonGroup disableElevation variant="contained">
                 <Button onClick={handleSettingButtonClick}>Settings</Button>
+                <Button onClick={handleMicButtonClick}>
+                  {isAudioMuted ? <MicOffIcon /> : <MicIcon />}
+                </Button>
+                <Button onClick={handleVideoButtonClick}>
+                  {isVideoMuted ? <VideocamOffIcon /> : <VideocamIcon />}
+                </Button>
                 <Button onClick={handlePublishButtonClick}>
                   {isPublished ? "Unpublish" : "Publish"}
                 </Button>
