@@ -190,23 +190,51 @@ const VideoCall: React.FunctionComponent = () => {
           )}
         </ChannelCard>
       </Container>
-      <Dialog fullScreen open={isJoined} fullWidth>
+      <Dialog
+        fullScreen
+        open={isJoined}
+        fullWidth
+        data-testid="video-call-dialog"
+      >
         <DialogContainer>
           <RemoteStreamView remoteStreamList={remoteStreamList} />
           <BottomPanel>
             <ButtonGroupWrapper>
               <ButtonGroup disableElevation variant="contained">
-                <Button onClick={handleSettingButtonClick}>Settings</Button>
-                <Button onClick={handleMicButtonClick}>
-                  {isAudioMuted ? <MicOffIcon /> : <MicIcon />}
+                <Button
+                  onClick={handleSettingButtonClick}
+                  data-testid="settings-button"
+                >
+                  Settings
                 </Button>
-                <Button onClick={handleVideoButtonClick}>
-                  {isVideoMuted ? <VideocamOffIcon /> : <VideocamIcon />}
+                <Button onClick={handleMicButtonClick} data-testid="mic-button">
+                  {isAudioMuted ? (
+                    <MicOffIcon data-testid="mic-off-icon" />
+                  ) : (
+                    <MicIcon data-testid="mic-on-icon" />
+                  )}
                 </Button>
-                <Button onClick={handlePublishButtonClick}>
+                <Button
+                  onClick={handleVideoButtonClick}
+                  data-testid="video-button"
+                >
+                  {isVideoMuted ? (
+                    <VideocamOffIcon data-testid="video-off-icon" />
+                  ) : (
+                    <VideocamIcon data-testid="video-on-icon" />
+                  )}
+                </Button>
+                <Button
+                  onClick={handlePublishButtonClick}
+                  data-testid="publish-button"
+                >
                   {isPublished ? "Unpublish" : "Publish"}
                 </Button>
-                <Button color="secondary" onClick={handleLeaveButtonClick}>
+                <Button
+                  color="secondary"
+                  onClick={handleLeaveButtonClick}
+                  data-testid="leave-button"
+                >
                   LEAVE
                 </Button>
               </ButtonGroup>
@@ -214,7 +242,12 @@ const VideoCall: React.FunctionComponent = () => {
           </BottomPanel>
         </DialogContainer>
       </Dialog>
-      <Dialog open={isSettingOpen} onClose={handleSettingDialogClose} fullWidth>
+      <Dialog
+        open={isSettingOpen}
+        onClose={handleSettingDialogClose}
+        fullWidth
+        data-testid="settings-dialog"
+      >
         <DialogTitle>Settings</DialogTitle>
         <DialogContent>
           <TextField
@@ -227,6 +260,12 @@ const VideoCall: React.FunctionComponent = () => {
             helperText="Please select your camera"
             fullWidth
             margin="normal"
+            SelectProps={{
+              SelectDisplayProps: {
+                // @ts-ignore
+                "data-testid": "camera-select",
+              },
+            }}
           >
             {cameraList.map((item) => (
               <MenuItem key={item.deviceId} value={item.deviceId}>
@@ -253,13 +292,14 @@ const VideoCall: React.FunctionComponent = () => {
           </TextField>
         </DialogContent>
       </Dialog>
-      <Dialog open={isConfigureChannelOpen}>
+      <Dialog open={isConfigureChannelOpen} data-testid="configure-dialog">
         <ConfigureChannelForm onDialogClose={handleConfigureDialogClose} />
       </Dialog>
       {isChannelConfigured && (
         <ConfigureChannelFab
           variant="extended"
           onClick={handleConfigureButtonClick}
+          data-testid="configure-fab"
         >
           <EditIcon style={{ marginRight: 8 }} />
           Configure Channel

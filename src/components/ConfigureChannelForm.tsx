@@ -72,7 +72,11 @@ const ConfigureChannelForm: React.FunctionComponent<{
     <form onSubmit={formik.handleSubmit}>
       <DialogTitle>
         Configure Channel{" "}
-        <CloseButton aria-label="close" onClick={handleCancelButtonClick}>
+        <CloseButton
+          aria-label="close"
+          onClick={handleCancelButtonClick}
+          data-testid="close-button"
+        >
           <CloseIcon />
         </CloseButton>
       </DialogTitle>
@@ -80,6 +84,9 @@ const ConfigureChannelForm: React.FunctionComponent<{
         <TextField
           id="appId"
           name="appId"
+          inputProps={{
+            "data-testid": "appId-input",
+          }}
           value={formik.values.appId}
           error={!!(formik.touched.appId && formik.errors.appId)}
           helperText={formik.touched.appId && formik.errors.appId}
@@ -91,6 +98,9 @@ const ConfigureChannelForm: React.FunctionComponent<{
         <TextField
           id="channel"
           name="channel"
+          inputProps={{
+            "data-testid": "channel-input",
+          }}
           value={formik.values.channel}
           error={!!(formik.touched.channel && formik.errors.channel)}
           helperText={formik.touched.channel && formik.errors.channel}
@@ -102,6 +112,9 @@ const ConfigureChannelForm: React.FunctionComponent<{
         <TextField
           id="token"
           name="token"
+          inputProps={{
+            "data-testid": "token-input",
+          }}
           value={formik.values.token}
           error={!!(formik.touched.token && formik.errors.token)}
           helperText={formik.touched.token && formik.errors.token}
@@ -114,7 +127,11 @@ const ConfigureChannelForm: React.FunctionComponent<{
       </DialogContent>
       <DialogActions>
         {isChannelConfigured && (
-          <Button color="secondary" onClick={handleRemoveButtonClick}>
+          <Button
+            color="secondary"
+            onClick={handleRemoveButtonClick}
+            data-testid="remove-button"
+          >
             Remove
           </Button>
         )}
