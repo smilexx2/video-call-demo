@@ -21,11 +21,11 @@ import ConfigureChannelForm from "../../components/ConfigureChannelForm";
 import RemoteStreamView from "../../components/RemoteStreamView";
 import { useAgora } from "../../hooks";
 import { updateState } from "./videoCallSlice";
+import AppFooter from "../../components/AppFooter";
 
 const Container = styled.div`
   display: flex;
-  justify-content: center;
-  align-items: center;
+  flex-direction: column;
   min-height: 100vh;
 `;
 
@@ -189,6 +189,7 @@ const VideoCall: React.FunctionComponent = () => {
             </Button>
           )}
         </ChannelCard>
+        <AppFooter />
       </Container>
       <Dialog
         fullScreen
