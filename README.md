@@ -1,46 +1,52 @@
-# Getting Started with Create React App
+# Video Call Demo
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+A web based application to allow a user to have video call with others - powered by [agora.io.](https://www.agora.io)
 
-## Available Scripts
+## 在线 demo 链接
 
-In the project directory, you can run:
+https://video-call-demo-uktkh.ondigitalocean.app/
+
+## 实现功能
+
+- [x] join / leave
+- [x] publish / unpublish
+- [x] mute / unmute video
+- [x] mute / unmute audio
+- [x] 摄像头、麦克风参数设置
+- [x] 多人视频通话
+- [x] 错误处理
+
+## 使用技术
+
+- 语言: `typescript`
+- 框架: `react`
+- 状态管理: `redux-toolkit`
+- UI 组件库: `material-ui`
+- 测试: `react-testing-library`
+- 脚手架: `create-react-app`
+- 音视频服务： `agora-rtc-sdk`
+- 异步: `async/await`
+- 表单: `formik`
+- Styling: `styled-components`
+- 本地存储: `localStorage`
+- 代码格式化: `prettier`
+
+## 本地应用启动
+
+安装所有依赖包：
+
+### `npm install`
+
+启动应用：
 
 ### `npm start`
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+在以下地址打开应用：
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+[http://localhost:3000](http://localhost:3000)
+
+## 测试
+
+本地测试命令：
 
 ### `npm test`
-
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
-
-### `npm run build`
-
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
-
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
