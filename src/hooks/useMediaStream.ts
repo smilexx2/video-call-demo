@@ -29,11 +29,9 @@ const useMediaStream = (
       const { stream } = evt;
       if (stream) {
         const id = stream.getId();
-        setRemoteStreamList((streamList) => {
-          const index = streamList.findIndex((item) => item.getId() === id);
-          streamList.splice(index, 1);
-          return [...streamList];
-        });
+        setRemoteStreamList((streamList) =>
+          streamList.filter((item) => item.getId() !== id)
+        );
       }
     };
     // subscribe when added
