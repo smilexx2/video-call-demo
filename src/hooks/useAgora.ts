@@ -30,6 +30,13 @@ const useAgora = () => {
     localStream.switchDevice("video", state.cameraId);
   }, [state.cameraId, localStream]);
 
+  useEffect(() => {
+    if (!state.microphoneId || !localStream) {
+      return;
+    }
+    localStream.switchDevice("audio", state.microphoneId);
+  }, [state.microphoneId, localStream]);
+
   const join = async () => {
     // Creates a new agora client with given parameters.
     // mode can be 'rtc' for real time communications or 'live' for live broadcasting.
