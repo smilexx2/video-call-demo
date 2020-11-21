@@ -50,3 +50,7 @@ https://video-call-demo-uktkh.ondigitalocean.app/
 本地测试命令：
 
 ### `npm test`
+
+## 已知问题
+
+当用户加入 channel 之后有一定机率摄像头在另外用户的应用上没有默认开启，需要手动 unpublish/publish 来开启。
