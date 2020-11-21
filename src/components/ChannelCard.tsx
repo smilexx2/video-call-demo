@@ -28,27 +28,23 @@ const ChannelCard: React.FunctionComponent<{
     <Container maxWidth="xs">
       <Grid container direction="column" spacing={3}>
         <Grid item xs={12}>
-          <Card variant="outlined">
-            <CardContent>
-              <EmptyWrapper>
-                <StyledEmpty />
-                <p style={{ display: "none" }}>
-                  Icons made by{" "}
-                  <a
-                    href="https://www.flaticon.com/free-icon/laptop_3492203?term=video%20conference&page=2&position=57"
-                    title="catkuro"
-                  >
-                    catkuro
-                  </a>{" "}
-                  from{" "}
-                  <a href="https://www.flaticon.com/" title="Flaticon">
-                    {" "}
-                    www.flaticon.com
-                  </a>
-                </p>
-              </EmptyWrapper>
-            </CardContent>
-          </Card>
+          <EmptyWrapper>
+            <StyledEmpty />
+            <p style={{ display: "none" }}>
+              Icons made by{" "}
+              <a
+                href="https://www.flaticon.com/free-icon/laptop_3492203?term=video%20conference&page=2&position=57"
+                title="catkuro"
+              >
+                catkuro
+              </a>{" "}
+              from{" "}
+              <a href="https://www.flaticon.com/" title="Flaticon">
+                {" "}
+                www.flaticon.com
+              </a>
+            </p>
+          </EmptyWrapper>
         </Grid>
         <Grid item xs={12}>
           {children}
