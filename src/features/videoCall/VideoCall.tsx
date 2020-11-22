@@ -2,6 +2,7 @@ import React from "react";
 import Button from "@material-ui/core/Button";
 import ButtonGroup from "@material-ui/core/ButtonGroup";
 import Card from "@material-ui/core/Card";
+import CircularProgress from "@material-ui/core/CircularProgress";
 import Dialog from "@material-ui/core/Dialog";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogTitle from "@material-ui/core/DialogTitle";
@@ -16,12 +17,12 @@ import VideocamOffIcon from "@material-ui/icons/VideocamOff";
 import { useDispatch, useSelector } from "react-redux";
 import styled, { css } from "styled-components";
 import { RootState } from "../../app/store";
+import AppFooter from "../../components/AppFooter";
 import ChannelCard from "../../components/ChannelCard";
 import ConfigureChannelForm from "../../components/ConfigureChannelForm";
 import RemoteStreamView from "../../components/RemoteStreamView";
 import { useAgora } from "../../hooks";
 import { updateState } from "./videoCallSlice";
-import AppFooter from "../../components/AppFooter";
 
 const Container = styled.div`
   display: flex;
@@ -73,12 +74,26 @@ const ConfigureChannelFab = styled(Fab)`
   right: 16px;
 `;
 
+const Loading = styled(CircularProgress)`
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  margin-top: -12px;
+  margin-left: -12px;
+`;
+
+const ButtonWrapper = styled.div`
+  position: relative;
+  margin: 8px;
+`;
+
 const VideoCall: React.FunctionComponent = () => {
   const {
     remoteStreamList,
     cameraList,
     microphoneList,
     isJoined,
+    isLoading,
     isPublished,
     isVideoMuted,
     isAudioMuted,
@@ -169,25 +184,29 @@ const VideoCall: React.FunctionComponent = () => {
     <>
       <Container>
         <ChannelCard>
-          {isChannelConfigured ? (
-            <Button
-              onClick={handleJoinButtonClick}
-              variant="contained"
-              fullWidth
-              color="primary"
-            >
-              Join Channel
-            </Button>
-          ) : (
-            <Button
-              onClick={handleConfigureButtonClick}
-              fullWidth
-              variant="contained"
-              disableElevation
-            >
-              Configure Channel
-            </Button>
-          )}
+          <ButtonWrapper>
+            {isChannelConfigured ? (
+              <Button
+                onClick={handleJoinButtonClick}
+                variant="contained"
+                fullWidth
+                color="primary"
+                disabled={isLoading}
+              >
+                Join Channel
+              </Button>
+            ) : (
+              <Button
+                onClick={handleConfigureButtonClick}
+                fullWidth
+                variant="contained"
+                disableElevation
+              >
+                Configure Channel
+              </Button>
+            )}
+            {isLoading && <Loading size={24} />}
+          </ButtonWrapper>
         </ChannelCard>
         <AppFooter />
       </Container>
